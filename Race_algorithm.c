@@ -1,16 +1,17 @@
 /*------------------------------------------------------------------------------------
 Programa fuente: Race_algorithm
 Compilador a utilizar: Zinjai (solo para prototipar)
-Programador: <López Sansores Lander Antonio>
-Descripción: desarrollo del algoritmo principal de ejecución de las carreras simuladas
-Fecha de creación: 10/05/2026
-Versión: 1.0.
+Programador: <Lï¿½pez Sansores Lander Antonio>
+Descripciï¿½n: desarrollo del algoritmo principal de ejecuciï¿½n de las carreras simuladas
+Fecha de creaciï¿½n: 10/05/2026
+Versiï¿½n: 1.0.
 ---------------------------------------------------------------------------------------*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <ctype.h>
 #include <time.h>
 
 struct lap_time{ // Estructura para registrar los tiempos en las carreras
@@ -43,12 +44,12 @@ struct circuit{
 	int laps;
 };
 
-/*<---------- Información de los circuitos ---------->*/
+/*<---------- Informaciï¿½n de los circuitos ---------->*/
 struct circuit monaco = {70,4,72}; // Circuito de prueba
 
 int main() {
 	
-	/*<---------- Información de los pilotos ---------->*/
+	/*<---------- Informaciï¿½n de los pilotos ---------->*/
 	drivers[0].level = 10;
 	strcpy(drivers[0].name, "George Russel");
 	strcpy(drivers[0].team, "Mercedes AMG");
@@ -209,3 +210,6 @@ int main() {
 	}
 	return 0;
 }
+
+
+
