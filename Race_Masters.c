@@ -4,7 +4,7 @@ Compilador a utilizar: Zinjai
 Programadores: <Alvarez Abel, Mis Elliot, Lopez Lander, Ruiz Pedro, Salazar Javier>
 Descripcion: Programa que simula computacionalmente carreras de formula 1, y que contiene un modulo de apuestas para el usuario
 Fecha de creacion: 10/05/2026
-Version: 2.0 (Integracion de modulos)
+Version: 1.5 (Integracion de modulos)
 -------------------------------------------------------------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -16,7 +16,7 @@ Version: 2.0 (Integracion de modulos)
 #include <windows.h>
 
 /* ================================================================
-ESTRUCTURAS (info. de campeonato, pilotos y circuitos)
+ESTRUCTURAS (unificadas desde simulacion.c y MODULO_APUESTAS.c)
 ================================================================ */
 
 struct tiempo_vuelta {
@@ -25,6 +25,8 @@ struct tiempo_vuelta {
 };
 
 struct campeonato {
+	/*Nota importante: al final ninguna variable de esta estructura se utilizo debido a un cambio en la forma de manejar el campeonato.
+	Sin embargo, como se usa la variable add para la sumatoria del campeonato, y se le llama como .add en todo el algoritmo, por cuuestiones de tiempo se dejo*/
 	int australia;
 	int china;
 	int japon;
@@ -105,8 +107,8 @@ void   info_circuitos(void);
 /* --- Modulo de transferencia de saldo --- */
 void   transferir_saldo(float *Fondos);
 
-/* --- Algoritmo de Luhn --- */
-int validar_tarjeta(char tarjeta[20]);
+/* --- Algoritmo de validacion --- */
+void capturar_tarjeta(char tarjeta[20]);
 
 /* --- Modulo de apuestas (desde MODULO_APUESTAS.c) --- */
 void   cancelar_apuesta(int *PilotosApostados, float *Fondos);
@@ -148,6 +150,7 @@ int main(void) {
 	printf("\nHola %s :)\n", usuario);
 	printf("Race Masters es un programa que simula computacionalmente carreras de\n");
 	printf("formula uno, donde tu puedes elegir entre simplemente verlas, o apostar en ellas.\n");
+	printf("Tambien, durante cada carrera, cada 3 segundos se imprimirá el progreso de esta cada 10 vueltas, para que no te pierdas de la accion :0\n");
 	printf("Inicias con un saldo de $0.00 - ve al modulo de Transferir Saldo para recargar.\n");
 	
 	menu_inicio(usuario);   /* pasa el control al menu principal */
@@ -222,6 +225,7 @@ void menu_inicio(char usuario[50]) {
 		printf("\n==================================================================\n");
 		printf("  MENU PRINCIPAL - Hola, %s | Saldo: $%.2f\n", usuario, Fondos);
 		printf("==================================================================\n");
+		printf("Recomendacion: selecciona transferir saldo primero para poder apostar mas adelante\n");
 		printf("  1) Simulacion\n");
 		printf("  2) Info. Pilotos\n");
 		printf("  3) Info. Circuitos\n");
@@ -320,14 +324,14 @@ MODULO: TRANSFERIR SALDO
 
 void transferir_saldo(float *Fondos) {
 	float monto;
-	char tarjeta[20];
+	char tarjeta[16];
 	printf("\n========== TRANSFERIR SALDO ==========\n");
 	printf("Saldo actual: $%.2f\n", *Fondos);
-	printf("Ingrese su número de tarjeta de débito/crédito: ");
-	fgets(tarjeta, 20, stdin);
-	validar_tarjeta(tarjeta);
 	printf("Ingrese el monto a depositar: $");
 	scanf("%f", &monto);
+	printf("Ingrese su número de tarjeta de débito/crédito: ");
+	capturar_tarjeta(tarjeta);
+	printf("Tarjeta aceptada. Procediendo con el deposito...\n");
 	fflush(stdin);
 	if (monto > 0) {
 		*Fondos += monto;
@@ -338,28 +342,32 @@ void transferir_saldo(float *Fondos) {
 }
 
 /*=================================================================
-ALGORITMO DE LUHN PARA VALIDAR LA TARJETA
+ALGORITMO PARA VALIDAR LA TARJETA
 ===================================================================*/
-int validar_tarjeta(char tarjeta[20]) {
-	int len = strlen(tarjeta);
-	// Las tarjetas tienen entre 13 y 19 digitos segun el tipo
-	if (len < 13 || len > 19) {
-		printf("Numero de tarjeta invalido.\n");
-		return 0;
-	}
-	// Solo digitos, sin espacios ni guiones
-	for (int i = 0; i < len; i++) {
-		if (!isdigit(tarjeta[i])) {
-			printf("La tarjeta solo debe contener numeros.\n");
-			return 0;
+void capturar_tarjeta(char tarjeta[16]) {
+	int valida = 0;
+	while (!valida) {
+		printf("Ingrese su numero de tarjeta (16 digitos): ");
+		fgets(tarjeta, 20, stdin);
+		tarjeta[strcspn(tarjeta, "\n")] = '\0';
+		
+		int len = strlen(tarjeta);
+		valida = 1;
+		
+		if (len != 16) {
+			printf("La tarjeta debe tener 16 digitos. Intente de nuevo.\n");
+			valida = 0;
+			continue;
+		}
+		
+		for (int i = 0; i < len; i++) {
+			if (!isdigit(tarjeta[i])) {
+				printf("La tarjeta solo debe contener numeros. Intente de nuevo.\n");
+				valida = 0;
+				break;
+			}
 		}
 	}
-	// Luhn
-	if (!validar_luhn(tarjeta)) {
-		printf("Numero de tarjeta no valido.\n");
-		return 0;
-	}
-	return 1;
 }
 
 /* ================================================================
