@@ -1,0 +1,284 @@
+/*------------------------------------------------------------------------------------
+Programa fuente: Estructura_Menu_F1
+Compilador a utilizar: Zinjai
+Descripción:
+Estructura del menú principal para el proyecto de Fórmula 1.
+
+-------------------------------------------------------------------------------------*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/*==================== VARIABLES GLOBALES ====================*/
+char usuario[30];
+char contrasena[30];
+float saldo = 0.0;
+
+/*==================== PROTOTIPOS ====================*/
+void login();
+void menuPrincipal();
+void simulacionCarreras();
+
+/* Funciones para que ustedes llenen*/
+void mostrarPilotos();
+void mostrarCircuitos();
+void transferirSaldo();
+void apostar();
+void ejecutarCarrera(int circuito);
+void mostrarResultadoCarrera();
+void clasificacionPilotos();
+void mostrarResultadoCampeonato();
+
+/*==================== LOGIN ====================*/
+void login()
+{
+	int opcion;
+	
+	do
+	{
+		printf("\n========== LOGIN ==========\n");
+		printf("1. Registrarse\n");
+		printf("2. Iniciar sesion\n");
+		printf("3. Salir\n");
+		printf("Seleccione una opcion: ");
+		scanf("%d", &opcion);
+		
+		switch(opcion)
+		{
+		case 1:
+			printf("Ingrese nombre de usuario: ");
+			scanf("%s", usuario);
+			
+			printf("Ingrese contrasena: ");
+			scanf("%s", contrasena);
+			
+			saldo = 0.0;
+			
+			printf("\nUsuario registrado correctamente.\n");
+			printf("Saldo inicial: $%.2f\n", saldo);
+			
+			/* Después de registrarse se envía directamente al menú */
+			menuPrincipal();
+			break;
+			
+		case 2:
+		{
+			char u[30], c[30];
+			
+			printf("Usuario: ");
+			scanf("%s", u);
+			
+			printf("Contrasena: ");
+			scanf("%s", c);
+			
+			if(strcmp(u, usuario) == 0 && strcmp(c, contrasena) == 0)
+			{
+				printf("\nBienvenido %s\n", usuario);
+				menuPrincipal();
+			}
+			else
+			{
+				printf("\nCredenciales incorrectas.\n");
+			}
+			break;
+		}
+		
+		case 3:
+			printf("Saliendo del programa...\n");
+			break;
+			
+		default:
+			printf("Opcion invalida.\n");
+		}
+		
+	} while(opcion != 3);
+}
+
+/*==================== MENU PRINCIPAL ====================*/
+void menuPrincipal()
+{
+	int opcion;
+	
+	do
+	{
+		printf("\n========== MENU DE INICIO ==========\n");
+		printf("1. Informacion de pilotos\n");
+		printf("2. Informacion de circuitos\n");
+		printf("3. Simulacion de carreras por campeonatos\n");
+		printf("4. Transferir saldo\n");
+		printf("5. Salir al LOGIN\n");
+		printf("Saldo actual: $%.2f\n", saldo);
+		printf("Seleccione una opcion: ");
+		scanf("%d", &opcion);
+		
+		switch(opcion)
+		{
+		case 1:
+			mostrarPilotos();
+			break;
+			
+		case 2:
+			mostrarCircuitos();
+			break;
+			
+		case 3:
+			simulacionCarreras();
+			break;
+			
+		case 4:
+			transferirSaldo();
+			break;
+			
+		case 5:
+			printf("Regresando al LOGIN...\n");
+			return;
+			
+		default:
+			printf("Opcion invalida.\n");
+		}
+		
+	} while(1);
+}
+
+/*==================== SIMULACION ====================*/
+void simulacionCarreras()
+{
+	int circuito;
+	int opcionApuesta;
+	int opcionMini;
+	
+	while(1)
+	{
+		/* 1.1 Menú de circuitos */
+		printf("\n========== MENU DE CIRCUITOS ==========\n");
+		mostrarCircuitos();
+		printf("0. Regresar al MENU DE INICIO\n");
+		printf("Seleccione un circuito: ");
+		scanf("%d", &circuito);
+		
+		if(circuito == 0)
+			return;
+		
+		/* 1.1.1 ¿Desea apostar? */
+		printf("\n========== APUESTAS ==========\n");
+		printf("1. Si, deseo apostar\n");
+		printf("2. No apostar\n");
+		printf("3. Regresar al MENU DE INICIO\n");
+		printf("Seleccione una opcion: ");
+		scanf("%d", &opcionApuesta);
+		
+		switch(opcionApuesta)
+		{
+		case 1:
+			apostar();
+			break;
+			
+		case 2:
+			/* Continúa sin apostar */
+			break;
+			
+		case 3:
+			return;
+			
+		default:
+			printf("Opcion invalida.\n");
+			continue;
+		}
+		
+		/* 1.1.2 Ejecución de la carrera */
+		ejecutarCarrera(circuito);
+		
+		/* 1.1.3 Resultado final */
+		mostrarResultadoCarrera();
+		
+		/* 1.1.4 Menú mini */
+		while(1)
+		{
+			printf("\n========== MENU MINI ==========\n");
+			printf("1. Siguiente carrera\n");
+			printf("2. Clasificacion de pilotos\n");
+			printf("3. Salir al MENU DE INICIO\n");
+			printf("Seleccione una opcion: ");
+			scanf("%d", &opcionMini);
+			
+			switch(opcionMini)
+			{
+			case 1:
+				/* Rompe el menú mini y vuelve al menú de circuitos */
+				goto siguiente_carrera;
+				
+			case 2:
+				clasificacionPilotos();
+				break;
+				
+			case 3:
+				/* Rompe todo el flujo y vuelve al menú principal */
+				return;
+				
+			default:
+				printf("Opcion invalida.\n");
+			}
+		}
+		
+		siguiente_carrera:
+			  ;
+	}
+	
+	/* 1.2 Resultado del campeonato
+	(Se puede llamar cuando se hayan corrido todos los circuitos) */
+	/* mostrarResultadoCampeonato(); */
+}
+
+/*==================== FUNCIONES VACIAS ====================*/
+/* aqui llenan las funciones  */
+
+void mostrarPilotos()
+{
+	printf("\n[AQUI VA LA FUNCION mostrarPilotos()]\n");
+}
+
+void mostrarCircuitos()
+{
+	printf("\n[AQUI VA LA FUNCION mostrarCircuitos()]\n");
+}
+
+void transferirSaldo()
+{
+	printf("\n[AQUI VA LA FUNCION transferirSaldo()]\n");
+	/* Ejemplo:
+	saldo += 500;
+	*/
+}
+
+void apostar()
+{
+	printf("\n[AQUI VA LA FUNCION apostar()]\n");
+}
+
+void ejecutarCarrera(int circuito)
+{
+	printf("\n[AQUI VA LA FUNCION ejecutarCarrera(%d)]\n", circuito);
+}
+
+void mostrarResultadoCarrera()
+{
+	printf("\n[AQUI VA LA FUNCION mostrarResultadoCarrera()]\n");
+}
+
+void clasificacionPilotos()
+{
+	printf("\n[AQUI VA LA FUNCION clasificacionPilotos()]\n");
+}
+
+void mostrarResultadoCampeonato()
+{
+	printf("\n[AQUI VA LA FUNCION mostrarResultadoCampeonato()]\n");
+}
+
+/*==================== MAIN ====================*/
+int main()
+{
+	login();
+	return 0;
+}
